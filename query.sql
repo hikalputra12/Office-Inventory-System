@@ -3,6 +3,7 @@ CREATE TABLE category(
 	name VARCHAR(100),
 	description TEXT,
 	created_at timestamp default current_timestamp,
+	updated_at timestamp default current_timestamp
 )
 CREATE TABLE inventory_items(
 	inventory_items_id SERIAL PRIMARY KEY ,
@@ -11,12 +12,14 @@ CREATE TABLE inventory_items(
 	price NUMERIC(15,0),
 	purchase_date DATE,
 	created_at timestamp default current_timestamp,
+	updated_at timestamp default current_timestamp
 )
 
 --fitur kategori barang
 
 --menampilkan daftar category--
 SELECT category_id, name, description FROM category
+WHERE updated_at IS NULL;
 
 --menambah category baru--
 INSERT INTO category (name,description) VALUES
@@ -71,3 +74,7 @@ SELECT
 
 FROM inventory_items
 WHERE inventory_items_id = $1;
+
+--fitur tambahan mencari barang berdarsarkan nama
+SELECT name,price,purchase_date FROM inventory_items
+WHERE name =$1;
