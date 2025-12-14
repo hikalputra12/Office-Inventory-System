@@ -13,7 +13,7 @@ type ServiceCategory struct {
 // ServiceCategoryInterface defines the methods for category services.
 type ServiceCategoryInterface interface {
 	GetAllCategory() ([]*model.Category, error)
-	// CreateCategory(category model.Category) (model.Category, error)
+	CreateCategory(category *model.Category) error
 	// GetCategoryByID(id int) (model.Category, error)
 	// UpdateCategory(id int, category model.Category) (model.Category, error)
 	// DeleteCategory(id int) error
@@ -31,4 +31,11 @@ func (s *ServiceCategory) GetAllCategory() ([]*model.Category, error) {
 		return nil, err
 	}
 	return category, nil
+}
+func (s *ServiceCategory) CreateCategory(category *model.Category) error {
+	err := s.repo.CreateCategory(category)
+	if err != nil {
+		return err
+	}
+	return nil
 }

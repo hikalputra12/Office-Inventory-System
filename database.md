@@ -4,8 +4,6 @@ Table category {
   name varchar
   description text
   create_at timestamp
-  update_at timestamp
-  delete_at timestamp
 }
 
 Table inventory_items {
@@ -15,8 +13,6 @@ Table inventory_items {
   price int
   purchase_date timestamp
   create_at timestamp
-  update_at timestamp
-  delete_at timestamp
 }
 
 

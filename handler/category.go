@@ -13,7 +13,7 @@ type HandlerCategory struct {
 // HandlerCategoryInterface defines the methods for category handlers.
 type HandlerCategoryInterface interface {
 	GetAllCategory() ([]*model.Category, error)
-	// CreateCategory(category model.Category) (model.Category, error)
+	CreateCategory(model.Category) error
 	// GetCategoryByID(id int) (model.Category, error)
 	// UpdateCategory(id int, category model.Category) (model.Category, error)
 	// DeleteCategory(id int) error
@@ -31,4 +31,13 @@ func (h *HandlerCategory) GetAllCategory() ([]*model.Category, error) {
 		return nil, err
 	}
 	return category, nil
+}
+
+// CreateCategory adds a new category using the service.
+func (h *HandlerCategory) CreateCategory(category *model.Category) error {
+	err := h.Service.CreateCategory(category)
+	if err != nil {
+		return err
+	}
+	return nil
 }

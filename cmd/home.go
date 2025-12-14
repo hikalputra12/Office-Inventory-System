@@ -27,6 +27,7 @@ func HomePage(handler handler.HandlerCategory) {
 		case 1:
 			GetAllCategory(handler)
 		case 2:
+			CreateCategory(handler)
 
 		case 3:
 
