@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"context"
 	"inventory-system/model"
 	"inventory-system/service"
 )
@@ -14,9 +15,9 @@ type HandlerCategory struct {
 type HandlerCategoryInterface interface {
 	GetAllCategory() ([]*model.Category, error)
 	CreateCategory(model.Category) error
-	// GetCategoryByID(id int) (model.Category, error)
-	// UpdateCategory(id int, category model.Category) (model.Category, error)
-	// DeleteCategory(id int) error
+	GetCategoryByID(id int) (*model.Category, error)
+	UpdateCategory(id int, category *model.Category) (*model.Category, error)
+	DeleteCategory(ctx context.Context, id int) error
 }
 
 // NewHandlerCategory creates a new instance of HandlerCategory.
@@ -40,4 +41,27 @@ func (h *HandlerCategory) CreateCategory(category *model.Category) error {
 		return err
 	}
 	return nil
+}
+func (h *HandlerCategory) GetCategoryByID(id int) (*model.Category, error) {
+	category, err := h.Service.GetCategoryByID(id)
+	if err != nil {
+		return nil, err
+	}
+	return category, nil
+}
+
+func (h *HandlerCategory) UpdateCategory(id int, category *model.Category) (*model.Category, error) {
+	updatedCategory, err := h.Service.UpdateCategory(id, category)
+	if err != nil {
+		return nil, err
+	}
+	return updatedCategory, nil
+}
+func (h *HandlerCategory) DeleteCategory(ctx context.Context, id int) error {
+	err := h.Service.DeleteCategory(ctx, id)
+	if err != nil {
+		return err
+	}
+	return nil
+
 }

@@ -18,9 +18,9 @@ type RepositoryCategory struct {
 type RepositoryCategoryInterface interface {
 	GetAllCategory() ([]*model.Category, error)
 	CreateCategory(category *model.Category) error
-	// GetCategoryByID(id int) (*model.Category, error)
-	// UpdateCategory(id int, category *model.Category) (*model.Category, error)
-	// DeleteCategory(id int) error
+	GetCategoryByID(id int) (*model.Category, error)
+	UpdateCategory(id int, category *model.Category) (*model.Category, error)
+	DeleteCategory(ctx context.Context, id int) error
 }
 
 // NewRepositoryCategory creates a new instance of RepositoryCategory.
@@ -31,7 +31,7 @@ func NewRepositoryCategory(db *pgx.Conn) RepositoryCategory {
 }
 
 // GetAllCategory retrieves all categories from the database.
-func (r RepositoryCategory) GetAllCategory() ([]*model.Category, error) {
+func (r *RepositoryCategory) GetAllCategory() ([]*model.Category, error) {
 	query := `SELECT category_id, name, description FROM category
 				WHERE deleted_at IS NULL;`
 	rows, err := r.DB.Query(context.Background(), query)
@@ -52,7 +52,8 @@ func (r RepositoryCategory) GetAllCategory() ([]*model.Category, error) {
 	return categories, nil
 }
 
-func (r RepositoryCategory) CreateCategory(category *model.Category) error {
+// CreateCategory adds a new category to the database.
+func (r *RepositoryCategory) CreateCategory(category *model.Category) error {
 	query := `INSERT INTO category (name,description,created_at, updated_at) VALUES
 	($1, $2,$3,$4) RETURNING category_id , created_at, updated_at`
 
@@ -71,5 +72,53 @@ func (r RepositoryCategory) CreateCategory(category *model.Category) error {
 		return fmt.Errorf("repository: gagal membuat kategori: %w", err)
 	}
 	return nil
+
+}
+
+func (r *RepositoryCategory) GetCategoryByID(id int) (*model.Category, error) {
+	query := `SELECT name,description FROM category WHERE category_id=$1;`
+
+	rows, err := r.DB.Query(context.Background(), query, id)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var category model.Category
+	if rows.Next() {
+		err := rows.Scan(&category.Name, &category.Description)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return &category, nil
+}
+
+func (r *RepositoryCategory) UpdateCategory(id int, category *model.Category) (*model.Category, error) {
+	query := `UPDATE category
+			 SET name=$1, description=$2, updated_at=$3
+			 WHERE category_id=$4`
+	now := time.Now()
+	rows, err := r.DB.Query(context.Background(), query, category.Name, category.Description, now, id)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	category.UpdatedAt = now
+	var updatedCategory model.Category
+	if rows.Next() {
+		err := rows.Scan(&updatedCategory.Name, &updatedCategory.Description, &updatedCategory.UpdatedAt)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return &updatedCategory, nil
+}
+func (r *RepositoryCategory) DeleteCategory(ctx context.Context, id int) error {
+	query := `DELETE FROM category 
+			WHERE category_id=$1;
+			`
+	_, err := r.DB.Exec(ctx, query, id)
+	return err
 
 }

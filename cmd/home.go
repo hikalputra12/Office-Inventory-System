@@ -11,9 +11,10 @@ func HomePage(handler handler.HandlerCategory) {
 	for {
 		fmt.Println("\n1. View Categories")
 		fmt.Println("2. Add Category")
-		fmt.Println("3. Add Item")
-		fmt.Println("4. View Items")
-		fmt.Println("5. Exit")
+		fmt.Println("3. View Category by ID")
+		fmt.Println("4. Update Category by ID")
+		fmt.Println("5. Delete Category")
+		fmt.Println("6. Exit")
 
 		var choise int
 		fmt.Print("enter your input: ")
@@ -30,10 +31,14 @@ func HomePage(handler handler.HandlerCategory) {
 			CreateCategory(handler)
 
 		case 3:
+			GetCategoryByID(handler)
 
 		case 4:
-
+			UpdateCategory(handler)
 		case 5:
+			DeleteCategory(handler)
+
+		case 6:
 			fmt.Println("Exiting...")
 			os.Exit(0)
 		default:
